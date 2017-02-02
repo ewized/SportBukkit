@@ -2,9 +2,11 @@ package org.bukkit.craftbukkit;
 
 import com.mojang.authlib.GameProfile;
 import java.io.File;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import net.minecraft.server.EntityPlayer;
@@ -27,12 +29,19 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     private final GameProfile profile;
     private final CraftServer server;
     private final WorldNBTStorage storage;
+    private final Optional<Instant> updatedAt;
 
     protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
         this.storage = (WorldNBTStorage) (server.console.worlds.get(0).getDataManager());
+        this.updatedAt = profile.getName() != null ? Optional.of(Instant.now())
+                                                   : Optional.empty();
+    }
 
+    @Override
+    public Optional<Instant> getUpdatedAt() {
+        return updatedAt;
     }
 
     public GameProfile getProfile() {

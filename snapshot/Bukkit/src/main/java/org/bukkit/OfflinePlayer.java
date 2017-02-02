@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.ServerOperator;
 
-public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable, tc.oc.minecraft.api.entity.OfflinePlayer {
+public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable, tc.oc.minecraft.api.user.OfflinePlayer {
 
     /**
      * Checks if this player is currently online

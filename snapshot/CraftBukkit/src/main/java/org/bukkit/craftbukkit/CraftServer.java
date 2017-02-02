@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -149,6 +151,7 @@ import org.bukkit.event.server.TabCompleteEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import tc.oc.minecraft.api.configuration.InvalidConfigurationException;
 import tc.oc.minecraft.api.plugin.PluginFinder;
+import tc.oc.minecraft.api.user.OfflinePlayerFinder;
 
 public final class CraftServer extends CraftBukkitRuntime implements Server {
     private static final Player[] EMPTY_PLAYER_ARRAY = new Player[0];
@@ -199,6 +202,8 @@ public final class CraftServer extends CraftBukkitRuntime implements Server {
     public boolean bungee = false;
     public static final com.google.gson.Gson gson = new com.google.gson.Gson();
     private final Path root;
+
+    @Inject Provider<OfflinePlayerFinder> userFinderProvider;
 
     private @Nullable Instant emptySince;
 
@@ -335,7 +340,11 @@ public final class CraftServer extends CraftBukkitRuntime implements Server {
             logger.info("Creating injector in stage " + stage);
 
             try {
-                injector = Guice.createInjector(stage, new ServerInstanceModule(this, Arrays.asList(plugins)));
+                injector = Guice.createInjector(
+                    stage,
+                    new CraftServerModule(),
+                    new ServerInstanceModule(this, Arrays.asList(plugins))
+                );
             } catch(RuntimeException ex) {
                 logger.log(Level.SEVERE, "Injector creation failed, server will shut down", ex);
                 throw ex;
